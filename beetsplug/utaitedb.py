@@ -10,15 +10,15 @@ from beets import autotag, config, library, ui, util
 from beets.autotag.hooks import AlbumInfo, TrackInfo
 from beets.plugins import BeetsPlugin, apply_item_changes, get_distance
 
-VOCADB_NAME = "VocaDB"
-VOCADB_BASE_URL = "https://vocadb.net/"
-VOCADB_API_URL = "https://vocadb.net/api/"
+UTAITEDB_NAME = "UtaiteDB"
+UTAITEDB_BASE_URL = "https://utaitedb.net/"
+UTAITEDB_API_URL = "https://utaitedb.net/api/"
 USER_AGENT = f"beets/{beets.__version__} +https://beets.io/"
 HEADERS = {"accept": "application/json", "User-Agent": USER_AGENT}
 
 
-class VocaDBPlugin(BeetsPlugin):
-    data_source = VOCADB_NAME
+class UtaiteDBPlugin(BeetsPlugin):
+    data_source = UTAITEDB_NAME
 
     def __init__(self):
         super().__init__()
@@ -31,7 +31,7 @@ class VocaDBPlugin(BeetsPlugin):
         )
 
     def commands(self):
-        cmd = ui.Subcommand("vdbsync", help="update metadata from VocaDB")
+        cmd = ui.Subcommand("vdbsync", help="update metadata from UtaiteDB")
         cmd.parser.add_option(
             "-p",
             "--pretend",
@@ -86,10 +86,10 @@ class VocaDBPlugin(BeetsPlugin):
                 )
                 continue
             if not (
-                item.get("data_source") == VOCADB_NAME and item.mb_trackid.isnumeric()
+                item.get("data_source") == UTAITEDB_NAME and item.mb_trackid.isnumeric()
             ):
                 self._log.info(
-                    "Skipping non-{0} singleton: {1}", VOCADB_NAME, item_formatted
+                    "Skipping non-{0} singleton: {1}", UTAITEDB_NAME, item_formatted
                 )
                 continue
             track_info = self.track_for_id(item.mb_trackid)
@@ -118,10 +118,10 @@ class VocaDBPlugin(BeetsPlugin):
                 continue
             items = list(album.items())
             if not (
-                album.get("data_source") == VOCADB_NAME and album.mb_albumid.isnumeric()
+                album.get("data_source") == UTAITEDB_NAME and album.mb_albumid.isnumeric()
             ):
                 self._log.info(
-                    "Skipping non-{0} album: {1}", VOCADB_NAME, album_formatted
+                    "Skipping non-{0} album: {1}", UTAITEDB_NAME, album_formatted
                 )
                 continue
             album_info = self.album_for_id(album.mb_albumid)
@@ -169,18 +169,18 @@ class VocaDBPlugin(BeetsPlugin):
 
     def track_distance(self, item, info):
         """Returns the track distance."""
-        return get_distance(data_source=VOCADB_NAME, info=info, config=self.config)
+        return get_distance(data_source=UTAITEDB_NAME, info=info, config=self.config)
 
     def album_distance(self, items, album_info, mapping):
         """Returns the album distance."""
         return get_distance(
-            data_source=VOCADB_NAME, info=album_info, config=self.config
+            data_source=UTAITEDB_NAME, info=album_info, config=self.config
         )
 
     def candidates(self, items, artist, album, va_likely, extra_tags=None):
         self._log.debug("Searching for album {0}", album)
         url = urljoin(
-            VOCADB_API_URL,
+            UTAITEDB_API_URL,
             f"albums/?query={quote(album)}&maxResults=5&nameMatchMode=Auto",
         )
         request = Request(url, headers=HEADERS)
@@ -202,7 +202,7 @@ class VocaDBPlugin(BeetsPlugin):
         self._log.debug("Searching for track {0}", item)
         language = self.get_lang(config["import"]["languages"].as_str_seq())
         url = urljoin(
-            VOCADB_API_URL,
+            UTAITEDB_API_URL,
             f"songs/?query={quote(title)}"
             + f"&fields={self.get_song_fields()}"
             + f"&lang={language}"
@@ -229,7 +229,7 @@ class VocaDBPlugin(BeetsPlugin):
         self._log.debug("Searching for album {0}", album_id)
         language = self.get_lang(config["import"]["languages"].as_str_seq())
         url = urljoin(
-            VOCADB_API_URL,
+            UTAITEDB_API_URL,
             f"albums/{album_id}"
             + "?fields=Artists,Discs,Tags,Tracks,WebLinks"
             + f"&songFields={self.get_song_fields()}"
@@ -252,7 +252,7 @@ class VocaDBPlugin(BeetsPlugin):
         self._log.debug("Searching for track {0}", track_id)
         language = self.get_lang(config["import"]["languages"].as_str_seq())
         url = urljoin(
-            VOCADB_API_URL,
+            UTAITEDB_API_URL,
             f"songs/{track_id}"
             + f"?fields={self.get_song_fields()}"
             + f"&lang={language}",
@@ -343,7 +343,7 @@ class VocaDBPlugin(BeetsPlugin):
         catalognum = release.get("catalogNumber", None)
         genre = self.get_genres(release)
         media = release["discs"][0]["name"]
-        data_url = urljoin(VOCADB_BASE_URL, f"Al/{album_id}")
+        data_url = urljoin(UTAITEDB_BASE_URL, f"Al/{album_id}")
         return AlbumInfo(
             album=album,
             album_id=album_id,
@@ -366,7 +366,7 @@ class VocaDBPlugin(BeetsPlugin):
             language=language,
             genre=genre,
             media=media,
-            data_source=VOCADB_NAME,
+            data_source=UTAITEDB_NAME,
             data_url=data_url,
         )
 
@@ -400,7 +400,7 @@ class VocaDBPlugin(BeetsPlugin):
         composer = ", ".join(artist_categories["composers"])
         lyricist = ", ".join(artist_categories["lyricists"])
         length = recording.get("lengthSeconds", 0)
-        data_url = urljoin(VOCADB_BASE_URL, f"S/{track_id}")
+        data_url = urljoin(UTAITEDB_BASE_URL, f"S/{track_id}")
         bpm = str(recording.get("maxMilliBpm", 0) // 1000)
         genre = self.get_genres(recording)
         script, language, lyrics = self.get_lyrics(
@@ -429,7 +429,7 @@ class VocaDBPlugin(BeetsPlugin):
             medium=medium,
             medium_index=medium_index,
             medium_total=medium_total,
-            data_source=VOCADB_NAME,
+            data_source=UTAITEDB_NAME,
             data_url=data_url,
             lyricist=lyricist,
             composer=composer,
