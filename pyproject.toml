@@ -3,7 +3,7 @@ name = "beets-utaitedb"
 version = "0.0.1"
 description = "Plugin for beets to use UtaiteDB as an autotagger source."
 authors = [ 
-  { name="amogus07", email="konstantinkreutz@gmail.com" }
+  { name="amogus07", email="78656278+amogus07@users.noreply.github.com" }
 ]
 license = { text = "MIT" }
 classifiers=[
