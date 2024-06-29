@@ -31,7 +31,7 @@ class UtaiteDBPlugin(BeetsPlugin):
         )
 
     def commands(self):
-        cmd = ui.Subcommand("vdbsync", help="update metadata from UtaiteDB")
+        cmd = ui.Subcommand("udbsync", help="update metadata from UtaiteDB")
         cmd.parser.add_option(
             "-p",
             "--pretend",
@@ -65,7 +65,7 @@ class UtaiteDBPlugin(BeetsPlugin):
         return [cmd]
 
     def func(self, lib, opts, args):
-        """Command handler for the vdbsync function."""
+        """Command handler for the udbsync function."""
         move = ui.should_move(opts.move)
         pretend = opts.pretend
         write = ui.should_write(opts.write)
