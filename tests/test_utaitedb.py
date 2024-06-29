@@ -1,11 +1,11 @@
 from unittest import TestCase
 
-from beetsplug.vocadb import VocaDBPlugin
+from beetsplug.utaitedb import UtaiteDBPlugin
 
 
-class TestVocaDBPlugin(TestCase):
+class TestUtaiteDBPlugin(TestCase):
     def setUp(self):
-        self.plugin = VocaDBPlugin()
+        self.plugin = UtaiteDBPlugin()
 
     def test_get_song_fields(self):
         self.assertEqual(self.plugin.get_song_fields(), "Artists,Tags,Bpm,Lyrics")
