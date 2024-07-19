@@ -491,7 +491,6 @@ class UtaiteDBPlugin(BeetsPlugin):
             "composers": {},
             "lyricists": {},
         }
-        composers, producers = [], []
         for artist in artists:
             parent = artist.get("artist", {})
             if parent:
@@ -500,14 +499,10 @@ class UtaiteDBPlugin(BeetsPlugin):
             else:
                 name = artist.get("name", "")
                 id = ""
-            if "Producer" in artist["categories"]:
+            if "Producer" in artist["categories"] or "Band" in artist["categories"]:
                 if "Default" in artist["effectiveRoles"]:
                     artist["effectiveRoles"] += ",Arranger,Composer,Lyricist"
                 out["producers"][name] = id
-                if "Composer" in artist["effectiveRoles"]:
-                    composers.append(name)
-                else:
-                    producers.append(name)
             if "Circle" in artist["categories"]:
                 out["circles"][name] = id
             if "Arranger" in artist["effectiveRoles"]:
@@ -518,6 +513,8 @@ class UtaiteDBPlugin(BeetsPlugin):
                 out["lyricists"][name] = id
             if "Vocalist" in artist["categories"] and not artist["isSupport"]:
                 out["vocalists"][name] = id
+        if not out["producers"] and out["vocalists"]:
+            out["producers"] = out["vocalists"]
         if not out["arrangers"]:
             out["arrangers"] = out["producers"]
         if not out["composers"]:
@@ -526,11 +523,15 @@ class UtaiteDBPlugin(BeetsPlugin):
             out["lyricists"] = out["producers"]
         if comp or len(out["producers"]) > 5:
             return out, "Various artists"
-        artistString = ", ".join(composers + producers + list(out["circles"].keys()))
+        artistString = ", ".join(
+            list(out["producers"].keys()) + list(out["circles"].keys())
+        )
         if not album and out["vocalists"]:
-            artistString += " feat. " + ", ".join(
-                [name for name in out["vocalists"] if name not in out["producers"]]
-            )
+            featuring = [
+                name for name in out["vocalists"] if name not in out["producers"]
+            ]
+            if featuring:
+                artistString += " feat. " + ", ".join(featuring)
         return out, artistString
 
     def get_genres(self, info):
