@@ -9,7 +9,7 @@ class TestVocaDBPlugin(TestCase):
         self.plugin = VocaDBPlugin()
 
     def test_get_genres(self):
-        info = {}
+        info: dict[str, list[dict[str, Any]]] = {}
         self.assertEqual(self.plugin.get_genres(info), "")
         info = {
             "tags": [
