@@ -1,3 +1,4 @@
+from typing import Any
 from unittest import TestCase
 
 from beetsplug.vocadb import VocaDBPlugin

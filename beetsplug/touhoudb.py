@@ -1,12 +1,12 @@
-from beetsplug.vocadb import VocaDBPlugin, VocaDBInstance
+from beets.plugins import BeetsPlugin
+from beetsplug.vocadb_template import get_vocadb_plugin
 
-
-class TouhouDBPlugin(VocaDBPlugin):
-    def __init__(self) -> None:
-        super().__init__()
-        self.instance = VocaDBInstance(
-            name="TouhouDB",
-            base_url="https://touhoudb.com/",
-            api_url="https://touhoudb.com/api/",
-            subcommand="tdbsync",
-        )
+class TouhouDBPlugin(
+    get_vocadb_plugin(
+        name="TouhouDB",
+        base_url="https://touhoudb.com/",
+        api_url="https://touhoudb.com/api/",
+        subcommand="tdbsync",
+    )
+):
+    pass
