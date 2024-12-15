@@ -41,14 +41,14 @@ class VocaDBPlugin(BeetsPlugin):
             }
         )
 
-    user_agent: str = f"beets/{beets.__version__} +https://beets.io/"
-    headers: dict[str, str] = {"accept": "application/json", "User-Agent": user_agent}
-    languages = config["import"]["languages"].as_str_seq()
-    song_fields: str = "Artists,Tags,Bpm,Lyrics"
+    USER_AGENT: str = f"beets/{beets.__version__} +https://beets.io/"
+    HEADERS: dict[str, str] = {"accept": "application/json", "User-Agent": USER_AGENT}
+    LANGUAGES = config["import"]["languages"].as_str_seq()
+    SONG_FIELDS: str = "Artists,Tags,Bpm,Lyrics"
 
     @property
     def language(self) -> str:
-        return self.get_lang(self.languages, self.prefer_romaji)
+        return self.get_lang(self.LANGUAGES, self.prefer_romaji)
 
     @property
     def data_source(self) -> str:
@@ -267,7 +267,7 @@ class VocaDBPlugin(BeetsPlugin):
             self.instance.api_url,
             f"albums/?query={quote(album)}&maxResults=5&nameMatchMode=Auto",
         )
-        request: Request = Request(url, headers=self.headers)
+        request: Request = Request(url, headers=self.HEADERS)
         try:
             with urlopen(request) as result:
                 if result:
@@ -288,11 +288,11 @@ class VocaDBPlugin(BeetsPlugin):
         url: str = urljoin(
             self.instance.api_url,
             f"songs/?query={quote(title)}"
-            + f"&fields={self.song_fields}"
+            + f"&fields={self.SONG_FIELDS}"
             + f"&lang={self.language}"
             + "&maxResults=5&sort=SongType&preferAccurateMatches=true&nameMatchMode=Auto",
         )
-        request: Request = Request(url, headers=self.headers)
+        request: Request = Request(url, headers=self.HEADERS)
         try:
             with urlopen(request) as result:
                 if result:
@@ -316,10 +316,10 @@ class VocaDBPlugin(BeetsPlugin):
             self.instance.api_url,
             f"albums/{album_id}"
             + "?fields=Artists,Discs,Tags,Tracks,WebLinks"
-            + f"&songFields={self.song_fields}"
+            + f"&songFields={self.SONG_FIELDS}"
             + f"&lang={language}",
         )
-        request = Request(url, headers=self.headers)
+        request = Request(url, headers=self.HEADERS)
         try:
             with urlopen(request) as result:
                 if result:
@@ -338,10 +338,10 @@ class VocaDBPlugin(BeetsPlugin):
         url: str = urljoin(
             self.instance.api_url,
             f"songs/{track_id}"
-            + f"?fields={self.song_fields}"
+            + f"?fields={self.SONG_FIELDS}"
             + f"&lang={language}",
         )
-        request: Request = Request(url, headers=self.headers)
+        request: Request = Request(url, headers=self.HEADERS)
         try:
             with urlopen(request) as result:
                 if result:
