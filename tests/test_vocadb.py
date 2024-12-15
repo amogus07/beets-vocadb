@@ -6,8 +6,6 @@ from beetsplug.vocadb import VocaDBPlugin
 
 class TestVocaDBPlugin(TestCase):
 
-    plugin: VocaDBPlugin
-
     def setUp(self) -> None:
         self.plugin = VocaDBPlugin()
 
