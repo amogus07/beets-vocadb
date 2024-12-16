@@ -321,7 +321,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
             + f"&songFields={self.SONG_FIELDS}"
             + f"&lang={language}",
         )
-        request = Request(url, headers=self.HEADERS)
+        request: Request = Request(url, headers=self.HEADERS)
         try:
             with urlopen(request) as result:
                 if result:
