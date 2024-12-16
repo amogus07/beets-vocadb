@@ -1,7 +1,8 @@
 from beetsplug.utaitedb import UtaiteDBPlugin
-from tests.test_vocadb import TestVocaDBPlugin
+from tests._abstract_test_plugin import AbstractTestVocaDBPlugin
 
 
-class TestUtaiteDBPlugin(TestVocaDBPlugin):
-    def setUp(self) -> None:
-        self.plugin = UtaiteDBPlugin()
+class TestUtaiteDBPlugin(AbstractTestVocaDBPlugin):
+    @property
+    def plugin(cls):
+        return UtaiteDBPlugin()

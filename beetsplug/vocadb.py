@@ -1,12 +1,12 @@
-from beets.plugins import BeetsPlugin
-from beetsplug.vocadb_template import get_vocadb_plugin
+import beets_vocadb.abstract_plugin
+from beets_vocadb.instance_config import InstanceConfig
 
-class VocaDBPlugin(
-    get_vocadb_plugin(
-        name="VocaDB",
-        base_url="https://vocadb.net/",
-        api_url="https://vocadb.net/api/",
-        subcommand="vdbsync",
-    )
-):
-    pass
+class VocaDBPlugin(beets_vocadb.abstract_plugin.AbstractVocaDBPlugin):
+    @property
+    def vocadb_config(cls):
+        return InstanceConfig(
+            name="VocaDB",
+            base_url="https://vocadb.net/",
+            api_url="https://vocadb.net/api/",
+            subcommand="vdbsync"
+        )
