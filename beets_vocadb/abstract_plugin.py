@@ -1,4 +1,4 @@
-import abc
+from abc import ABC, abstractproperty
 from datetime import datetime
 from itertools import chain
 from json import load
@@ -17,7 +17,7 @@ from beets.ui import show_model_changes, Subcommand
 from beets_vocadb.instance_config import InstanceConfig
 
 
-class AbstractVocaDBPlugin(BeetsPlugin):
+class AbstractVocaDBPlugin(ABC, BeetsPlugin):
 
     # For API requests
     USER_AGENT: str = f"beets/{beets.__version__} +https://beets.io/"
@@ -44,7 +44,7 @@ class AbstractVocaDBPlugin(BeetsPlugin):
                 }
         )
 
-    @abc.abstractproperty
+    @abstractproperty
     def vocadb_config(cls) -> InstanceConfig:
         raise NotImplementedError
 

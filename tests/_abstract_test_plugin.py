@@ -1,4 +1,4 @@
-import abc
+from abc import ABC, abstractproperty
 from typing import Any
 from unittest import TestCase
 
@@ -6,12 +6,12 @@ from beetsplug.vocadb import VocaDBPlugin
 from beets_vocadb.abstract_plugin import AbstractVocaDBPlugin
 
 
-class AbstractTestVocaDBPlugin(abc.ABC, TestCase):
+class AbstractTestVocaDBPlugin(ABC, TestCase):
 
     def setUp(self) -> None:
         pass
 
-    @abc.abstractproperty
+    @abstractproperty
     def plugin(cls) -> AbstractVocaDBPlugin:
         raise NotImplementedError
 
