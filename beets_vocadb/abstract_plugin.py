@@ -32,7 +32,9 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
     DEFAULT_INCLUDE_FEATURED_ALBUM_ARTISTS: bool = False
     DEFAULT_VA_STRING: str = "Various artists"
 
-    def __init__(self):
+    instance_config: InstanceConfig
+
+    def __init__(self) -> None:
         super().__init__()
         self.config.add(
                 {
@@ -44,9 +46,8 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
                 }
         )
 
-    @abstractproperty
-    def vocadb_config(cls) -> InstanceConfig:
-        raise NotImplementedError
+    def __init_subclass__(cls, instance_config: InstanceConfig) -> None:
+        cls.instance_config = instance_config
 
     @property
     def language(self) -> str:
@@ -54,7 +55,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
 
     @property
     def data_source(self) -> str:
-        return self.vocadb_config.name
+        return self.instance_config.name
 
     @property
     def prefer_romaji(self) -> bool:
@@ -74,7 +75,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
 
     def commands(self) -> tuple[()]:
         cmd: Subcommand = Subcommand(
-            self.vocadb_config.subcommand,
+            self.instance_config.subcommand,
             help=f"update metadata from {self.data_source}",
         )
         cmd.parser.add_option(
@@ -266,7 +267,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
     ) -> tuple[()]:
         self._log.debug("Searching for album {0}", album)
         url: str = urljoin(
-            self.vocadb_config.api_url,
+            self.instance_config.api_url,
             f"albums/?query={quote(album)}&maxResults=5&nameMatchMode=Auto",
         )
         request: Request = Request(url, headers=self.HEADERS)
@@ -288,7 +289,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
     def item_candidates(self, item: Item, artist: str, title: str) -> tuple[()]:
         self._log.debug("Searching for track {0}", item)
         url: str = urljoin(
-            self.vocadb_config.api_url,
+            self.instance_config.api_url,
             f"songs/?query={quote(title)}"
             + f"&fields={self.SONG_FIELDS}"
             + f"&lang={self.language}"
@@ -315,7 +316,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
         self._log.debug("Searching for album {0}", album_id)
         language: str = self.language
         url: str = urljoin(
-            self.vocadb_config.api_url,
+            self.instance_config.api_url,
             f"albums/{album_id}"
             + "?fields=Artists,Discs,Tags,Tracks,WebLinks"
             + f"&songFields={self.SONG_FIELDS}"
@@ -338,7 +339,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
         self._log.debug("Searching for track {0}", track_id)
         language: str = self.language
         url: str = urljoin(
-            self.vocadb_config.api_url,
+            self.instance_config.api_url,
             f"songs/{track_id}"
             + f"?fields={self.SONG_FIELDS}"
             + f"&lang={language}",
@@ -437,7 +438,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
             media = release["discs"][0]["name"]
         except IndexError:
             pass
-        data_url: str = urljoin(self.vocadb_config.base_url, f"Al/{album_id}")
+        data_url: str = urljoin(self.instance_config.base_url, f"Al/{album_id}")
         return AlbumInfo(
             album=album,
             album_id=album_id,
@@ -495,7 +496,7 @@ class AbstractVocaDBPlugin(ABC, BeetsPlugin):
         composer: str = ", ".join(artist_categories["composers"])
         lyricist: str = ", ".join(artist_categories["lyricists"])
         length: float = recording.get("lengthSeconds", 0)
-        data_url: str = urljoin(self.vocadb_config.base_url, f"S/{track_id}")
+        data_url: str = urljoin(self.instance_config.base_url, f"S/{track_id}")
         bpm: str = str(recording.get("maxMilliBpm", 0) // 1000)
         genre: str = self.get_genres(recording)
         script, language, lyrics = self.get_lyrics(
