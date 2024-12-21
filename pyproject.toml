@@ -19,16 +19,13 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-dependencies = [
-    "beets",
-    "typing_extensions; python_version < '3.12'",
-]
+dependencies = ["beets", "typing_extensions; python_version < '3.12'"]
 
 [tool.basedpyright]
 pythonVersion = "3.9"
 
 [tool.setuptools.packages.find]
-exclude=["typings"]
+exclude = ["typings"]
 
 [build-system]
 requires = ["setuptools"]
