@@ -28,7 +28,7 @@ readme = { file = ["README.md"] }
 dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools.packages.find]
-exclude = ["typings"]
+exclude=["typings"]
 
 [build-system]
 requires = ["setuptools"]
